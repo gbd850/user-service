@@ -9,11 +9,15 @@ import dev.peter.springsecurityclient.repository.UserRepository;
 import dev.peter.springsecurityclient.repository.VerificationTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class UserService {
 
@@ -21,16 +25,17 @@ public class UserService {
     private VerificationTokenRepository verificationTokenRepository;
     private PasswordEncoder passwordEncoder;
     private ApplicationEventPublisher eventPublisher;
-    public User registerUser(UserDto userDto, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<String> registerUser(UserDto userDto, HttpServletRequest httpServletRequest) {
         User user = User.builder()
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .role(Role.USER)
+                .role(Role.USER.getValue())
                 .build();
+        userRepository.save(user);
         eventPublisher.publishEvent(new RegistrationCompleteEvent(user, generateApplicationUrl(httpServletRequest)));
-        return userRepository.save(user);
+        return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);
     }
 
     private String generateApplicationUrl(HttpServletRequest request) {

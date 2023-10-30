@@ -23,6 +23,6 @@ public class User {
     private String email;
     private String password;
     private boolean enabled = false;
-    private Role role;
+    private String role;
 
 }
