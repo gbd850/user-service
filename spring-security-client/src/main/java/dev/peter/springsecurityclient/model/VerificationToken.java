@@ -1,11 +1,6 @@
 package dev.peter.springsecurityclient.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +14,8 @@ public class VerificationToken {
 
     private static final int EXPIRATION_TIME = 10;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
     private Date expirationDate;
@@ -26,6 +23,11 @@ public class VerificationToken {
     @JoinColumn(name = "user_id",
             referencedColumnName = "id")
     private User user;
+
+    public VerificationToken(String token) {
+        this.token = token;
+        this.expirationDate = calculateExpirationDate(EXPIRATION_TIME);
+    }
 
     public VerificationToken(User user, String token) {
         this.token = token;
