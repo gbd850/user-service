@@ -2,6 +2,7 @@ package dev.peter.springsecurityclient.service;
 
 import dev.peter.springsecurityclient.dto.UserRequestDto;
 import dev.peter.springsecurityclient.event.RegistrationCompleteEvent;
+import dev.peter.springsecurityclient.helper.TokenUtil;
 import dev.peter.springsecurityclient.helper.UrlUtil;
 import dev.peter.springsecurityclient.model.Role;
 import dev.peter.springsecurityclient.model.User;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -31,9 +34,15 @@ public class UserService {
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .role(Role.USER.getValue())
                 .build();
+        String token = TokenUtil.generateToken();
         userRepository.save(user);
-        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.generateApplicationUrl(httpServletRequest)));
-        return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);
+        String appUrl = UrlUtil.generateApplicationUrl(httpServletRequest);
+        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, token, appUrl));
+        String resendUrl = appUrl + "/resend?token=" + token;
+        return new ResponseEntity<>("User created successfully\n" +
+                "Verification link has been sent\n" +
+                "To resend verification link click here: " +
+                resendUrl, HttpStatus.CREATED);
     }
 
     public void updateUser(User user) {

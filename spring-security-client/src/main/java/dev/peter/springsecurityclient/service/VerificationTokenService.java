@@ -1,6 +1,7 @@
 package dev.peter.springsecurityclient.service;
 
 import dev.peter.springsecurityclient.event.RegistrationCompleteEvent;
+import dev.peter.springsecurityclient.helper.TokenUtil;
 import dev.peter.springsecurityclient.helper.UrlUtil;
 import dev.peter.springsecurityclient.model.User;
 import dev.peter.springsecurityclient.model.VerificationToken;
@@ -51,7 +52,8 @@ public class VerificationTokenService {
         }
         User user = verificationToken.get().getUser();
         verificationTokenRepository.delete(verificationToken.get());
-        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, UrlUtil.generateApplicationUrl(httpServletRequest)));
-        return new ResponseEntity<>("Token successfully resend", HttpStatus.OK);
+        String token = TokenUtil.generateToken();
+        eventPublisher.publishEvent(new RegistrationCompleteEvent(user, token, UrlUtil.generateApplicationUrl(httpServletRequest)));
+        return new ResponseEntity<>("Token successfully resent", HttpStatus.OK);
     }
 }
