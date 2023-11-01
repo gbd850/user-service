@@ -28,4 +28,10 @@ public class RegistrationController {
     public ResponseEntity<String> verifyRegistrationToken(@RequestParam("token") String token) {
         return verificationTokenService.validateToken(token);
     }
+
+    @GetMapping("/resend")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> resendVerificationToken(@RequestParam("token") String oldToken, HttpServletRequest httpServletRequest) {
+        return verificationTokenService.resendToken(oldToken, httpServletRequest);
+    }
 }
