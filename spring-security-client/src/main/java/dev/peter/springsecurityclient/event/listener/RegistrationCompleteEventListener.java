@@ -2,14 +2,12 @@ package dev.peter.springsecurityclient.event.listener;
 
 import dev.peter.springsecurityclient.event.RegistrationCompleteEvent;
 import dev.peter.springsecurityclient.model.User;
-import dev.peter.springsecurityclient.service.UserService;
 import dev.peter.springsecurityclient.service.VerificationTokenService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor

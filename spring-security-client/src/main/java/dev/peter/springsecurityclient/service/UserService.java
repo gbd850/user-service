@@ -1,6 +1,8 @@
 package dev.peter.springsecurityclient.service;
 
+import dev.peter.springsecurityclient.dto.PasswordResetRequest;
 import dev.peter.springsecurityclient.dto.UserRequestDto;
+import dev.peter.springsecurityclient.event.PasswordResetEvent;
 import dev.peter.springsecurityclient.event.RegistrationCompleteEvent;
 import dev.peter.springsecurityclient.helper.TokenUtil;
 import dev.peter.springsecurityclient.helper.UrlUtil;
@@ -16,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -47,5 +49,15 @@ public class UserService {
 
     public void updateUser(User user) {
         userRepository.save(user);
+    }
+
+    public ResponseEntity<String> resetPassword(PasswordResetRequest passwordResetRequest, HttpServletRequest httpServletRequest) {
+        Optional<User> user = userRepository.findByEmail(passwordResetRequest.getEmail());
+        if (user.isEmpty()) {
+            return new ResponseEntity<>("User with this email address does not exist", HttpStatus.NOT_FOUND);
+        }
+        String appUrl = UrlUtil.generateApplicationUrl(httpServletRequest);
+        eventPublisher.publishEvent(new PasswordResetEvent(user.get(), appUrl));
+        return new ResponseEntity<>("Password reset link has been sent", HttpStatus.OK);
     }
 }

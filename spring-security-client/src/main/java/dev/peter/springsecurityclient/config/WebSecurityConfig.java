@@ -25,7 +25,7 @@ public class WebSecurityConfig {
     @Order(0)
     public SecurityFilterChain whitelistFilterChain(HttpSecurity http) throws Exception {
 
-        String[] endpoints = new String[] {"/register", "/verify", "/resend"};
+        String[] endpoints = new String[] {"/register", "/verify", "/resend", "/resetPassword", "/changePassword"};
 
         return http
                 .cors(AbstractHttpConfigurer::disable)
