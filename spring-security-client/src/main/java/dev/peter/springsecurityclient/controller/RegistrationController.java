@@ -1,7 +1,6 @@
 package dev.peter.springsecurityclient.controller;
 
-import dev.peter.springsecurityclient.dto.UserDto;
-import dev.peter.springsecurityclient.model.User;
+import dev.peter.springsecurityclient.dto.UserRequestDto;
 import dev.peter.springsecurityclient.service.UserService;
 import dev.peter.springsecurityclient.service.VerificationTokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ public class RegistrationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registerUser(@RequestBody UserDto userDto, final HttpServletRequest httpServletRequest) {
+    public ResponseEntity<String> registerUser(@RequestBody UserRequestDto userDto, final HttpServletRequest httpServletRequest) {
         return userService.registerUser(userDto, httpServletRequest);
     }
 
