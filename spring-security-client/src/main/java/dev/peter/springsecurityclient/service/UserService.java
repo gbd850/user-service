@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private UserRepository userRepository;
-    private VerificationTokenRepository verificationTokenRepository;
     private PasswordEncoder passwordEncoder;
     private ApplicationEventPublisher eventPublisher;
     public ResponseEntity<String> registerUser(UserDto userDto, HttpServletRequest httpServletRequest) {
@@ -42,8 +41,7 @@ public class UserService {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
-    public void saveVerificationToken(User user, String token) {
-        VerificationToken verificationToken = new VerificationToken(user, token);
-        verificationTokenRepository.save(verificationToken);
+    public void updateUser(User user) {
+        userRepository.save(user);
     }
 }
