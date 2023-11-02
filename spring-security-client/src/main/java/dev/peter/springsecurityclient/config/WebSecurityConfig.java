@@ -32,6 +32,16 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher(endpoints)
                 .authorizeHttpRequests(auth -> auth.requestMatchers(endpoints).permitAll())
+                .authorizeHttpRequests(auth -> {
+                    try {
+                        auth.requestMatchers("/api/**").authenticated()
+                                .and()
+                                .oauth2Login(oauth2Login -> oauth2Login.loginPage("/oauth2/authorization/api-client-oidc"))
+                                .oauth2Client(Customizer.withDefaults());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .build();
     }
 
